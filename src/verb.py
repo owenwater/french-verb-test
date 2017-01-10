@@ -28,13 +28,13 @@ class Verb(object):
            Otherwise, parse it from the webpage.
         """
         if not ignore_cache and self.cache.is_valid_cache:
-            self.moods = self.cache.load_cache(lambda fp: json.load(fp))
+            self.data = self.cache.load_cache(lambda fp: json.load(fp))
             return True
         self.page = self.gateway.fetch()
         if not self.page:
             return False
-        self.moods = self.parse()
-        self.cache.dump_cache(lambda fp: json.dump(self.moods, fp))
+        self.data = self.parse()
+        self.cache.dump_cache(lambda fp: json.dump(self.data, fp))
         return True
 
     def parse(self):
@@ -85,11 +85,11 @@ class Verb(object):
 
     def __unicode__(self):
         str = u""
-        for mood in self.moods:
+        for mood in self.data:
             str += mood + u":\n"
-            for tense in self.moods[mood]:
+            for tense in self.data[mood]:
                 str += u"\t" + tense + ":\n"
-                for words in self.moods[mood][tense]:
+                for words in self.data[mood][tense]:
                     str += u"\t\t" + self.print_words(words, var=lambda w: bcolors.RED + w + bcolors.END) + u"\n"
             str += u"\n"
         return str

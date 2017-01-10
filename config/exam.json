@@ -1,0 +1,9 @@
+{
+  "mood": "random", 
+  "mood_num": 3, 
+  "tense": "random", 
+  "tense_num": 3, 
+  "type": "fit", 
+  "word": "random", 
+  "word_num": 10
+}
