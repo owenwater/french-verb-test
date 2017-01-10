@@ -2,6 +2,7 @@
 
 import os.path
 
+
 class Cache(object):
     PATH = "../cache/"
 

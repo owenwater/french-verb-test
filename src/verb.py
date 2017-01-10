@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
-
 from bs4 import BeautifulSoup
 import json
 
 from cache import Cache
 from gateway import Gateway
+
 
 class bcolors:
     PINK = '\033[95m'
@@ -13,28 +13,30 @@ class bcolors:
     RED = '\033[91m'
     END = '\033[0m'
 
+
 class Verb(object):
     VAR = "var"
     CONST = "const"
+
     def __init__(self, word):
         self.word = word
         self.gateway = Gateway(word)
         self.cache = Cache(word, "json")
 
-    def load(self, ignore_cache = False):
+    def load(self, ignore_cache=False):
         """Get all verb's moods from local cache if exist and |ignore_cache| is false.
            Otherwise, parse it from the webpage.
         """
         if not ignore_cache and self.cache.is_valid_cache:
-            self.moods = self.cache.load_cache(lambda fp : json.load(fp))
+            self.moods = self.cache.load_cache(lambda fp: json.load(fp))
             return True
         self.page = self.gateway.fetch()
         if not self.page:
             return False
         self.moods = self.parse()
-        self.cache.dump_cache(lambda fp : json.dump(self.moods, fp))
+        self.cache.dump_cache(lambda fp: json.dump(self.moods, fp))
         return True
-    
+
     def parse(self):
         """parse the html page and return dict of the words
         """
@@ -47,7 +49,7 @@ class Verb(object):
             if tag.name == u"h2" and tag.attrs.get("class", [None])[0] == u"mode":
                 if tenses and mood:
                     moods[mood] = tenses
-                    tenses  = {}
+                    tenses = {}
                 mood = tag.next.next.strip()
             elif tag.name == u"div" and tag.attrs.get("class", [None])[0] == u"tempstab":
                 tense = tag.find("h3", class_="tempsheader").next.strip()
@@ -69,8 +71,8 @@ class Verb(object):
         if tenses and mood:
             moods[mood] = tenses
         return moods
-    
-    def print_words(self, words, const = None, var = None):
+
+    def print_words(self, words, const=None, var=None):
         s = ""
         for word in words:
             if word[1] == Verb.VAR and var:
@@ -78,7 +80,7 @@ class Verb(object):
             elif word[1] == Verb.CONST and const:
                 s += const(word[0])
             else:
-                s  += word[0]
+                s += word[0]
         return s
 
     def __unicode__(self):
@@ -88,15 +90,15 @@ class Verb(object):
             for tense in self.moods[mood]:
                 str += u"\t" + tense + ":\n"
                 for words in self.moods[mood][tense]:
-                    str += u"\t\t" + self.print_words(words, var = lambda w : bcolors.RED + w + bcolors.END) + u"\n"
+                    str += u"\t\t" + self.print_words(words, var=lambda w: bcolors.RED + w + bcolors.END) + u"\n"
             str += u"\n"
         return str
 
     def __str__(self):
         return unicode(self).encode('utf-8')
 
-class VerbFactory(object):
 
+class VerbFactory(object):
     def __init__(self, words):
         """ Init VerbFactory with the set of words. 
         """
@@ -110,11 +112,7 @@ class VerbFactory(object):
         return self.verbs
 
 
-
-
-
-
-if __name__=="__main__":
+if __name__ == "__main__":
     path = "../config/words"
     with open(path) as fp:
         words = {word.strip() for word in fp.readlines()}
@@ -123,5 +121,3 @@ if __name__=="__main__":
     for verb in verbs:
         print bcolors.PINK + verb.word + bcolors.END
         print str(verb)
-
-
