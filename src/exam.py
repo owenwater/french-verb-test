@@ -81,6 +81,7 @@ class Exam(object):
         exam.choose_all_list()
         self.tests = {}
         for verb in self.choosed_verbs:
+            space = lambda w: "_" * len(w)
             if self.is_fit:
                 num_of_spaces = len(verb.word) + random.randint(10, 15)
             else:
@@ -90,13 +91,13 @@ class Exam(object):
                 test_tense = {}
                 for tense in self.choosed_tenses:
                     test_words = []
-                    if mood in verb.data and tense in verb.data[mood]:
-                        for words in verb.data[mood][tense]:
+                    if mood in verb and tense in verb[mood]:
+                        for words in verb[mood][tense]:
                             test_word = ""
                             if self.is_fit:
-                                test_word = verb.print_words(words, var=lambda w: "_" * num_of_spaces)
+                                test_word = Verb.print_words(words, var=space)
                             else:
-                                test_word = "_" * num_of_spaces
+                                test_word = Verb.print_words(words, var=space, const=space)
                             test_words.append(test_word)
                         test_tense[tense] = test_words
                 if test_tense:
@@ -104,8 +105,18 @@ class Exam(object):
             if test_mood:
                 self.tests[verb] = test_mood
 
-    def check_answer(self, actual_answer):
-        pass
+    def check_answer(self, expected, actual):
+        """Check the actual answer is correct
+           actual: a dict {
+            "mood": mood
+            "tense": tense
+            "words" : [list of 6 words]
+           }
+        """
+        expected_words = [Verb.print_words(word) for word in expected[actual['mood']][actual['tense']]]
+        if expected_words != actual["words"]:
+            return False, expected_words, actual["words"]
+        return True, [], []
 
 
 if __name__ == "__main__":
@@ -115,3 +126,12 @@ if __name__ == "__main__":
     if not exam.tests:
         print exam.choosed_moods
         print exam.choosed_tenses
+
+    for test in exam.tests:
+        ret, expect, actual = exam.check_answer(test, {
+            "mood": u"Indicatif",
+            "tense": u"Futur antérieur",
+            "words":
+            [u"j'aurai été", u"tu auras été", u"il aura été", u"nous aurons été", u"vous aurez été", u"ils auront été"]
+        })
+        print "Correct" if ret else "Wrong"
