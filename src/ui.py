@@ -92,8 +92,7 @@ class Window(object):
 
     @runtime
     def init_menu(self):
-        #self.switch_to_index()
-        self.switch_to_test()
+        self.switch_to_index()
 
 
 def main():

@@ -83,6 +83,9 @@ class WordFrame(Tkinter.Frame):
 class ResultFrame(Tkinter.Frame):
     def __init__(self, master):
         Tkinter.Frame.__init__(self, master)
+        self.bind("<Left>", self.previous_wrong_answer)
+        self.bind("<Right>", self.next_wrong_answer)
+        self.bind("<Shift-Return>", self.on_finish)
 
     @property
     def score_label(self):
@@ -120,18 +123,23 @@ class ResultFrame(Tkinter.Frame):
             WordFrame(self, expect_word, actual_word, is_red=(expect_word != actual_word)).show()
         ButtonFrame(self, self.index == 0, self.index == self.total - self.correct - 1).show()
         self.update()
+        self.focus_set()
 
-    def next_wrong_answer(self):
+    def next_wrong_answer(self, event=None):
+        if self.index >= self.total - self.correct - 1:
+            return
         self.reset()
         self.index += 1
         self.show_wrong_answer()
 
-    def previous_wrong_answer(self):
+    def previous_wrong_answer(self, event=None):
+        if self.index <= 0:
+            return
         self.reset()
         self.index -= 1
         self.show_wrong_answer()
 
-    def on_finish(self):
+    def on_finish(self, event=None):
         self.reset()
         self.place_forget()
         self.pack_forget()

@@ -5,7 +5,7 @@ import random
 
 from verb import VerbFactory, Verb
 from exam_config import ExamConfig
-
+from itertools import groupby
 
 class Exam(object):
     MOOD = "mood"
@@ -68,6 +68,7 @@ class Exam(object):
                                 test_word = Verb.print_words(words, var=space)
                             else:
                                 test_word = Verb.print_words(words, var=space, const=space)
+                            test_word = "".join((c[0] for c in groupby(test_word)))
                             test_words.append(test_word)
                             self.tests.append({
                                 Exam.MOOD: mood,

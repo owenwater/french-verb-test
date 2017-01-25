@@ -43,10 +43,11 @@ class TitleFrame(Tkinter.Frame):
 
 
 class WordFrame(Tkinter.Frame):
-    def __init__(self, master, word):
+    def __init__(self, master, word, index):
         Tkinter.Frame.__init__(self, master)
         self.word = word
         self.entries = []
+        self.index = index
 
     def show(self):
         self.pack(side=Tkinter.TOP)
@@ -57,14 +58,27 @@ class WordFrame(Tkinter.Frame):
             if first:
                 first = False
             else:
-                entry = Tkinter.Entry(self, width=30)
+                validate_cmd = (self.register(self.on_type), "%S")
+                entry = Tkinter.Entry(self, width=30, validate="key", validatecommand=validate_cmd)
+                entry.bind("<Shift-Return>", self.master.next_test)
+                entry.bind("<Up>", self.move_up)
+                entry.bind("<Down>", self.move_down)
                 entry.pack(side=Tkinter.LEFT)
                 self.entries.append(entry)
+
+    def move_up(self, event):
+        self.master.move_focus(self.index - 1)
+    def move_down(self, event):
+        self.master.move_focus(self.index + 1)
 
     def get(self):
         for entry in self.entries:
             self.word = self.word.replace(Exam.BLANK, entry.get(), 1)
         return self.word
+    
+    def on_type(self, s):
+        v = ord(s)
+        return v != 63233 and v != 63232
 
 
 class ButtonFrame(Tkinter.Frame):
@@ -126,14 +140,15 @@ class TestFrame(Tkinter.Frame):
         test = self.exam.tests[self.index]
         cnt_str = "%d/%d" % (self.index + 1, self.num_of_tests)
         TitleFrame(self, test[Exam.MOOD], test[Exam.TENSE], cnt_str).show()
-        for word in self.exam.tests[self.index][Exam.WORDS]:
-            word = WordFrame(self, word)
+        for i, word in enumerate(self.exam.tests[self.index][Exam.WORDS]):
+            word = WordFrame(self, word, i)
             word.show()
             self.words.append(word)
+        self.words[0].entries[0].focus_set()
         ButtonFrame(self, (self.index == self.num_of_tests - 1)).show()
         self.update()
 
-    def next_test(self):
+    def next_test(self, event=None):
         answers = []
         for word in self.words:
             answers.append(word.get())
@@ -146,6 +161,11 @@ class TestFrame(Tkinter.Frame):
             for widget in self.winfo_children():
                 widget.destroy()
             self.show_test()
+
+    def move_focus(self, word_index):
+        if word_index >= 0 and word_index < len(self.words):
+            self.words[word_index].entries[0].focus_set()
+
 
     def finish_test(self):
         for widget in self.winfo_children():
