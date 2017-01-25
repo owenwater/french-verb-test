@@ -1,0 +1,15 @@
+1) Save all words in config/words
+2) ./init to init the cache
+3) ./run to start the program
+
+Click "Config" to config
+Click "Test" to start the test
+
+Shortcut:
+
+When doing test:
+Shift-Return: Next test
+Up/Down: Move focus
+
+When showing result
+Left/Right: Previous/Next wrong answer
