@@ -7,6 +7,7 @@ from verb import VerbFactory, Verb
 from exam_config import ExamConfig
 from itertools import groupby
 
+
 class Exam(object):
     MOOD = "mood"
     TENSE = "tense"
