@@ -1,3 +1,5 @@
+Version 0.1
+
 1) Save all words in config/words
 2) ./init to init the cache
 3) ./run to start the program
