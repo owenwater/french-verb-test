@@ -2,6 +2,7 @@
 
 from BaseHTTPServer import BaseHTTPRequestHandler
 import urllib2
+import sys
 
 from cache import Cache
 

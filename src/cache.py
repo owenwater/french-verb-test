@@ -4,7 +4,7 @@ import os.path
 
 
 class Cache(object):
-    PATH = "../cache/"
+    PATH = "cache/"
 
     def __init__(self, file, ext):
         self.file_name = file + "." + ext

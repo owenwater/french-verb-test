@@ -1,9 +1,10 @@
 {
+  "fill_blank": true, 
   "mood": "random", 
   "mood_num": 3, 
   "tense": "random", 
   "tense_num": 3, 
-  "type": "fit", 
+  "test_num": 3, 
   "word": "random", 
   "word_num": 10
 }
